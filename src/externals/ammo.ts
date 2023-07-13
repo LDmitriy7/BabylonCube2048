@@ -1,9 +1,9 @@
-import * as Ammo from "ammo.js";
+import * as Ammo from "ammo.js"
 
-export let ammoModule: any;
+export let ammoModule: unknown
 export const ammoReadyPromise = new Promise((resolve) => {
-    new Ammo().then((res: unknown) => {
-        ammoModule = res;
-        resolve(res);
-    });
-});
+  new Ammo().then((res: unknown) => {
+    ammoModule = res
+    resolve(res)
+  })
+})
