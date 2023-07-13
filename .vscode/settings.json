@@ -1,0 +1,8 @@
+{
+  "files.exclude": {
+    "node_modules": true,
+    "yarn.lock": true
+  },
+  "workspace.isHidden": true,
+  "javascript.suggestionActions.enabled": false
+}

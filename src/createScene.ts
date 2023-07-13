@@ -10,12 +10,11 @@ export interface CreateSceneModule {
     default: CreateSceneClass;
 }
 
-export const getSceneModuleWithName = (
+export const getSceneModuleWithName = async (
     name = 'defaultWithTexture'
 ): Promise<CreateSceneClass> => {
-    return import('./scenes/' + name).then((module: CreateSceneModule)=> {
-        return module.default;
-    });
+    const module = await import('./scenes/' + name);
+    return module.default;
 
     // To build quicker, replace the above return statement with:
 
