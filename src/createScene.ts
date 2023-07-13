@@ -1,25 +1,10 @@
-import type { Engine } from "@babylonjs/core/Engines/engine";
-import type { Scene } from "@babylonjs/core/scene";
-
-export interface CreateSceneClass {
-    createScene: (engine: Engine, canvas: HTMLCanvasElement) => Promise<Scene>;
-    preTasks?: Promise<unknown>[];
-}
+import { SceneBuilder } from "./sceneBuilder"
 
 export interface CreateSceneModule {
-    default: CreateSceneClass;
+  default: typeof SceneBuilder
 }
 
-export const getSceneModuleWithName = async (
-    name = 'defaultWithTexture'
-): Promise<CreateSceneClass> => {
-    const module = await import('./scenes/' + name);
-    return module.default;
-
-    // To build quicker, replace the above return statement with:
-
-    // return import('./scenes/defaultWithTexture').then((module: CreateSceneModule)=> {
-    //     return module.default;
-    // });
-};
-
+export const getSceneModuleWithName = async (name = "scene1") => {
+  const module = await import("./scenes/" + name)
+  return (module as CreateSceneModule).default
+}

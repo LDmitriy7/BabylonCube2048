@@ -13,7 +13,7 @@ export const babylonInit = async (): Promise<void> => {
   const engineType =
     location.search.split("engine=")[1]?.split("&")[0] || "webgl"
   // Execute the pretasks, if defined
-  await Promise.all(createSceneModule.preTasks || [])
+  // await Promise.all(createSceneModule.preTasks || [])
   // Get the canvas element
   const canvas = document.getElementById("renderCanvas") as HTMLCanvasElement
   // Generate the BABYLON 3D engine
@@ -35,7 +35,8 @@ export const babylonInit = async (): Promise<void> => {
   }
 
   // Create the scene
-  const scene = await createSceneModule.createScene(engine, canvas)
+  const sceneBuilder = new createSceneModule(engine, canvas)
+  const scene = await sceneBuilder.createScene()
 
   // JUST FOR TESTING. Not needed for anything else
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -47,9 +48,7 @@ export const babylonInit = async (): Promise<void> => {
   })
 
   // Watch for browser/canvas resize events
-  window.addEventListener("resize", function () {
-    engine.resize()
-  })
+  window.addEventListener("resize", () => engine.resize())
 }
 
 babylonInit().then(() => {
