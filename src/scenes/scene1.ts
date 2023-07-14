@@ -1,23 +1,28 @@
-import { Scene } from "@babylonjs/core"
 import { SceneBuilder } from "../sceneBuilder"
 import {
+  Cube,
   createCamera,
-  createGround,
   createLight,
-  createMySphere,
+  createRoad,
   createShadows,
 } from "./builders"
 
 class Scene1Builder extends SceneBuilder {
+  cube: Cube
+
   async createScene() {
-    const scene = new Scene(this.engine)
+    const scene = this.scene
     this.inspector.show(scene)
-    const sphere = createMySphere()
+    this.cube = new Cube()
     const light = createLight(scene)
-    createCamera(this.canvas)
-    createGround()
-    createShadows(light, [sphere])
+    createCamera()
+    createRoad()
+    createShadows(light, [this.cube.mesh])
     return scene
+  }
+
+  updateScene() {
+    this.cube.run(this.dt)
   }
 }
 
