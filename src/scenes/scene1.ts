@@ -1,3 +1,4 @@
+// import { CreateBox } from "@babylonjs/core"
 import cubeMeshUrl from "assets/cube.glb"
 import { SceneManager } from "../sceneManager"
 import {
@@ -16,11 +17,12 @@ export default class extends SceneManager {
 
   async initScene() {
     const cubeMesh = await importCubeMesh()
+    // const cubeMesh = CreateBox("cube")
     const fontData = await importFontData(fontUrl)
     this.player = new Player(cubeMesh, fontData)
     this.inspector.show()
     const light = createLight(this.scene)
-    const camera = createCamera(this.player.focusPoint)
+    createCamera(this.player.focusPoint)
     createRoad()
     createShadows(light, this.player.meshes)
     this.onClick(() => this.player.switchSplitState())

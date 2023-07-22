@@ -8,16 +8,7 @@
     "**/Thumbs.db": true,
     "**/__pycache__": true,
     "node_modules": true,
-    "yarn.lock": true,
-    "[!s]*/**": true,
-    "s[!r]*/**": true,
-    "sr[!c]*/**": true,
-    "src/[!s]*/**": true,
-    "src/s[!c]*/**": true,
-    "src/sc[!e]*/**": true,
-    "src/sce[!n]*/**": true,
-    "src/scen[!e]*/**": true,
-    "src/scene[!s]*/**": true
+    "yarn.lock": true
   },
   "workspace.isHidden": true,
   "javascript.suggestionActions.enabled": false

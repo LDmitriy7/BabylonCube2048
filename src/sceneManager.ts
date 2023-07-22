@@ -5,6 +5,9 @@ import {
   Scene,
 } from "@babylonjs/core"
 
+import * as B from "@babylonjs/core"
+import { Environment } from "lib"
+
 type Callback = () => void
 
 export class SceneManager {
@@ -18,6 +21,13 @@ export class SceneManager {
     this.scene.onBeforeRenderObservable.add(() => {
       if (!this.paused) this.updateScene()
     })
+  }
+
+  createEnvironment(
+    cameraTarget: B.AbstractMesh,
+    shadowCasters: B.AbstractMesh[]
+  ) {
+    return new Environment(this.scene, cameraTarget, shadowCasters)
   }
 
   addPauseHandler() {

@@ -21,6 +21,7 @@ module.exports = {
     },
     alias: {
       assets: path.resolve("assets"),
+      lib: path.resolve("lib"),
     },
   },
   module: {
