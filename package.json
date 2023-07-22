@@ -13,10 +13,12 @@
     "@babylonjs/materials": "^6.0.0",
     "@babylonjs/serializers": "^6.12.0",
     "ammo.js": "github:kripken/ammo.js",
+    "earcut": "^2.2.4",
     "recast-detour": "^1.6.1"
   },
   "devDependencies": {
     "@playwright/test": "^1.31.1",
+    "@types/earcut": "^2.1.1",
     "@types/jest": "^29.5.1",
     "@typescript-eslint/eslint-plugin": "^5.12.0",
     "@typescript-eslint/parser": "^5.12",

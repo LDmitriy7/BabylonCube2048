@@ -1,18 +1,22 @@
 {
-	"compilerOptions": {
-        "module": "esNext",
-		"target": "es2021",
-		"moduleResolution": "node",
-		"strict": true,
-		"noImplicitAny": true,
-        "noImplicitReturns": true,
-        "noImplicitThis": true,
-        "strictNullChecks": true,
-        "strictFunctionTypes": true,
-		"preserveConstEnums":true,
-        "sourceMap": true,
-        "rootDir": "./",
-        "esModuleInterop": true,
-        "strictPropertyInitialization": false,
-	}
+  "compilerOptions": {
+    "module": "esNext",
+    "target": "es2021",
+    "moduleResolution": "Node",
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "preserveConstEnums": true,
+    "sourceMap": true,
+    "rootDir": ".",
+    "esModuleInterop": true,
+    "strictPropertyInitialization": false,
+    "baseUrl": ".",
+    "paths": {
+      "assets/*": ["assets/*"]
+    }
+  }
 }

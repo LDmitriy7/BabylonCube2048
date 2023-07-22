@@ -1,43 +1,30 @@
 import {
   AbstractMesh,
-  ArcRotateCamera,
-  Color3,
-  CreateBox,
   CreateGround,
+  CreateText,
   DirectionalLight,
+  FollowCamera,
   HemisphericLight,
+  IFontData,
   IShadowLight,
   Scene,
   ShadowGenerator,
   StandardMaterial,
   Vector3,
 } from "@babylonjs/core"
+import earcut from "earcut"
 
 export function createShadows(light: IShadowLight, targets: AbstractMesh[]) {
-  const gen = new ShadowGenerator(512, light)
+  const gen = new ShadowGenerator(2 ** 10, light)
+  gen.darkness = 0.5
   gen.useBlurExponentialShadowMap = true
-  gen.blurScale = 2
-  gen.setDarkness(0.5)
-  gen.getShadowMap()?.renderList?.push(...targets)
-}
-
-export class Cube {
-  mesh = CreateBox("cube", { size: 1 })
-  mat = new StandardMaterial("cube")
-
-  constructor() {
-    this.mesh.position.y = 0.5
-    this.mesh.material = this.mat
-    this.mat.diffuseColor = Color3.Red()
-  }
-
-  run(dt: number) {
-    this.mesh.position.x -= dt
-  }
+  gen.useKernelBlur = true
+  gen.blurKernel = 2 ** 4
+  targets.forEach((t) => gen.addShadowCaster(t))
 }
 
 export function createRoad() {
-  const mesh = CreateGround("road", { width: 60, height: 5 })
+  const mesh = CreateGround("road", { width: 500, height: 6 })
   mesh.position.x = -27
   const mat = new StandardMaterial("road")
   mesh.material = mat
@@ -52,27 +39,33 @@ export function createHemiLight(scene: Scene) {
 }
 
 export function createLight(scene: Scene) {
-  const light = new DirectionalLight("light", new Vector3(0, -1, 1), scene)
+  const dir = new Vector3(0.1, -1, 0.2)
+  const light = new DirectionalLight("light", dir, scene)
+  light.position.y = 5
+  light.specular.scaleInPlace(0.5)
   light.intensity = 0.7
-  light.position.y = 10
-  light.direction.x = 1
-  light.direction.y = -5
+  // light.autoUpdateExtends = false
   return light
 }
 
-export function createCamera() {
-  const alpha = 0
-  const beta = Math.PI / 5
-  const radius = 10
-  const camera = new ArcRotateCamera(
-    "camera",
-    alpha,
-    beta,
-    radius,
-    Vector3.Zero()
-  )
-  camera.setTarget(Vector3.Zero())
-  camera.attachControl(null, true)
-  camera.angularSensibilityX *= 5
-  camera.angularSensibilityY *= 5
+export function createCamera(target: AbstractMesh) {
+  const camera = new FollowCamera("camera", new Vector3(-10, 5))
+  camera.radius = 10
+  camera.lockedTarget = target
+  camera.maxCameraSpeed = 10
+  camera.rotationOffset = 90
+  camera.heightOffset = 5
+  return camera
+}
+
+export function createText(value: string, fontData: IFontData, size: number) {
+  const opts = {
+    size,
+    resolution: 64,
+    depth: 0.1 ** 2,
+  }
+  const text = CreateText("text", value, fontData, opts, undefined, earcut)
+  if (!text) throw new Error("Text creation failed")
+  text.scaling.scaleInPlace(0.5)
+  return text
 }

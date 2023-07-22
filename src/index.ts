@@ -36,7 +36,8 @@ export const babylonInit = async (): Promise<void> => {
 
   // Create the scene
   const sceneBuilder = new createSceneModule(engine, canvas)
-  const scene = await sceneBuilder.createScene()
+  await sceneBuilder.initScene()
+  const scene = sceneBuilder.scene
 
   // JUST FOR TESTING. Not needed for anything else
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

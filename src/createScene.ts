@@ -1,7 +1,7 @@
-import { SceneBuilder } from "./sceneBuilder"
+import { SceneManager } from "./sceneManager"
 
 export interface CreateSceneModule {
-  default: typeof SceneBuilder
+  default: typeof SceneManager
 }
 
 export const getSceneModuleWithName = async (name = "scene1") => {

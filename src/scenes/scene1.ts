@@ -1,29 +1,36 @@
-import { SceneBuilder } from "../sceneBuilder"
+import cubeMeshUrl from "assets/cube.glb"
+import { SceneManager } from "../sceneManager"
 import {
-  Cube,
   createCamera,
   createLight,
   createRoad,
   createShadows,
 } from "./builders"
+import { importFontData, importMesh } from "./lib"
+import { Player } from "./player"
 
-class Scene1Builder extends SceneBuilder {
-  cube: Cube
+const fontUrl = "https://assets.babylonjs.com/fonts/Droid Sans_Bold.json"
 
-  async createScene() {
-    const scene = this.scene
-    this.inspector.show(scene)
-    this.cube = new Cube()
-    const light = createLight(scene)
-    createCamera()
+export default class extends SceneManager {
+  player: Player
+
+  async initScene() {
+    const cubeMesh = await importCubeMesh()
+    const fontData = await importFontData(fontUrl)
+    this.player = new Player(cubeMesh, fontData)
+    this.inspector.show()
+    const light = createLight(this.scene)
+    const camera = createCamera(this.player.focusPoint)
     createRoad()
-    createShadows(light, [this.cube.mesh])
-    return scene
+    createShadows(light, this.player.meshes)
+    this.onClick(() => this.player.switchSplitState())
+    light.parent = this.player.mesh
+    this.addPauseHandler()
   }
 
   updateScene() {
-    this.cube.run(this.dt)
+    this.player.run(this.dt)
   }
 }
 
-export default Scene1Builder
+const importCubeMesh = () => importMesh(cubeMeshUrl, "cube", 0.5)
