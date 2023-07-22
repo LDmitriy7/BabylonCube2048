@@ -1,5 +1,5 @@
 import cubeMeshUrl from "assets/cube.glb"
-import { RunningCubes, createRoad, importMesh } from "lib"
+import { RunningCubes, createRoad, importCubeMesh } from "lib"
 import { SceneManager } from "../sceneManager"
 
 export default class extends SceneManager {
@@ -8,7 +8,7 @@ export default class extends SceneManager {
   async initScene() {
     this.inspector.show()
     createRoad(100)
-    const cube = await importMesh(cubeMeshUrl, "cube", 0.5)
+    const cube = await importCubeMesh(cubeMeshUrl)
     cube.position.y = 0.5
     const cubes = new RunningCubes(cube)
     cubes.setColor()

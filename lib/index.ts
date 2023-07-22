@@ -169,6 +169,8 @@ export class Cubes extends Entity {
   }
 }
 
+export const importCubeMesh = (url: string) => importMesh(url, "cube", 0.5)
+
 export class RunningCubes extends Cubes {
   speed = 5
 
