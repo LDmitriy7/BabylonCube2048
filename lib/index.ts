@@ -3,7 +3,8 @@ import "@babylonjs/loaders/glTF"
 
 const LIGHT_DIRECTION = new B.Vector3(0.1, -1, 0.2)
 const LIGHT_INTENSITY = 0.7
-const CAMERA_POSITION = new B.Vector3(-10, 5)
+const CAMERA_POSITION = new B.Vector3(0, 8, 11)
+const CAMERA_TARGET = new B.Vector3(0, 2, 0)
 const ROAD_LENGTH = 100
 const SHADOWS_MAP_SIZE = 2 ** 10
 const SHADOWS_DARKNESS = 0.5
@@ -76,12 +77,9 @@ export function createCamera(
   target: B.AbstractMesh,
   position = CAMERA_POSITION
 ) {
-  const camera = new B.FollowCamera("camera", position)
-  camera.radius = 10
-  camera.lockedTarget = target
-  camera.maxCameraSpeed = 10
-  camera.rotationOffset = 0
-  camera.heightOffset = 5
+  const camera = new B.FreeCamera("camera", position)
+  camera.target = CAMERA_TARGET
+  camera.parent = target
   return camera
 }
 
@@ -161,11 +159,18 @@ export class Cubes extends Entity {
     this.material = createMaterial(cube1)
     this.cube2 = cloneMesh(cube1)
     this.addChildren(this.cube1, this.cube2)
-    this.cube2.position.x += -2
   }
 
   setColor(color = B.Color3.Red(), emission = 0.5) {
     setColor(this.material, color, emission)
+  }
+
+  set enabled(value: boolean) {
+    this.mesh.setEnabled(value) // TODO: children?
+  }
+
+  get enabled() {
+    return this.mesh.isEnabled()
   }
 }
 
@@ -185,4 +190,97 @@ function flatMeshes(meshes: B.AbstractMesh[]) {
   mesh.parent = null
   meshes[0].dispose()
   return mesh
+}
+
+export type ClassType<T> = { new (): T }
+
+export function getBehavior<T extends Behavior>(
+  node: B.Node,
+  cls: ClassType<T>
+) {
+  let bhv = node.getBehaviorByName(cls.name) as T
+  if (!bhv) {
+    bhv = new cls()
+    node.addBehavior(bhv)
+  }
+  return bhv
+}
+
+export function shift(from: number, to: number, maxDelta: number) {
+  maxDelta = Math.abs(maxDelta)
+  if (from < to) return Math.min(from + maxDelta, to)
+  else return Math.max(from - maxDelta, to)
+}
+
+export class Behavior<T extends B.Node = B.TransformNode>
+  implements B.Behavior<T>
+{
+  name: string
+  scene: B.Scene
+  target: T
+  observer: B.Observer<B.Scene>
+
+  init() {
+    this.name = this.constructor.name
+  }
+
+  attach(target: T) {
+    this.scene = target.getScene()
+    this.target = target
+    this.initObserver()
+  }
+
+  initObserver() {
+    const observable = this.scene.onBeforeRenderObservable
+    const observer = observable.add(() =>
+      this.update(this.scene.deltaTime / 1000)
+    )
+    if (!observer) throw new Error("Observer creation failed")
+    this.observer = observer
+  }
+
+  detach(): void {
+    if (!this.observer) return
+    this.scene.onBeforeRenderObservable.remove(this.observer)
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars
+  update(dt: number) {}
+}
+
+export type AXIS = "x" | "y" | "z"
+export const AXES: AXIS[] = ["x", "y", "z"]
+
+class FollowPositionBehavior extends Behavior {
+  position: B.Vector3
+  speed = 1
+
+  attach(target: B.TransformNode) {
+    super.attach(target)
+    this.position = target.position.clone()
+  }
+
+  update(dt: number) {
+    const delta = dt * this.speed
+    AXES.forEach((i) => this.updateAxis(i, delta))
+  }
+
+  updateAxis(axis: AXIS, delta: number) {
+    const pos = this.target.position
+    pos[axis] = shift(pos[axis], this.position[axis], delta)
+  }
+}
+
+export function setTargetPosition(
+  mesh: B.AbstractMesh,
+  position: B.Vector3,
+  speed = 1
+) {
+  const bhv = getBehavior(mesh, FollowPositionBehavior)
+  bhv.position = position
+  bhv.speed = speed
+}
+
+export function setTargetPositionX(mesh: B.AbstractMesh, x: number, speed = 5) {
+  setTargetPosition(mesh, new B.Vector3(x), speed)
 }

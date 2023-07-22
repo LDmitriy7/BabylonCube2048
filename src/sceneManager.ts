@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import {
   Engine,
   KeyboardEventTypes,
@@ -21,6 +22,7 @@ export class SceneManager {
     this.scene.onBeforeRenderObservable.add(() => {
       if (!this.paused) this.updateScene()
     })
+    this.onClick(() => this.handleClick())
   }
 
   createEnvironment(
@@ -43,11 +45,9 @@ export class SceneManager {
     })
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   async initScene(): Promise<void> {}
-
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   updateScene() {}
+  handleClick() {}
 
   preTasks?: Promise<unknown>[]
 
